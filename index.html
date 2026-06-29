@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auxilio Inmediato - Localizador de Emergencia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .btn-panic {
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 59, 48, 0.4);
+            transition: transform 0.2s, background-color 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-panic:active {
+            transform: scale(0.95);
+            background-color: #d63026;
+        }
+        .status {
+            margin-top: 25px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #007aff;
+            min-height: 20px;
+        }
+        .instructions {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>LOCALIZADOR DE EMERGENCIA</h1>
+    <p>Presiona el botón para obtener tu ubicación actual y preparar el mensaje de ayuda.</p>
+    
+    <button class="btn-panic" onclick="buscarUbicacion()">Pedir<br>Ayuda</button>
+    
+    <div id="estado" class="status"></div>
+
+    <div class="instructions">
+        * Nota: Tu teléfono te pedirá permiso para acceder a la ubicación (GPS). Debes darle en "Permitir" para que funcione.
+    </div>
+</div>
+
+<script>
+function buscarUbicacion() {
+    const estado = document.getElementById('estado');
+    
+    // Validar si el navegador soporta Geolocalización
+    if (!navigator.geolocation) {
+        estado.style.color = "#ff3b30";
+        estado.innerHTML = "Tu navegador no soporta geolocalización.";
+        return;
+    }
+    
+    estado.style.color = "#007aff";
+    estado.innerHTML = "Obteniendo coordenadas GPS...";
+    
+    // Configuración de alta precisión para el GPS
+    const opciones = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    };
+
+    navigator.geolocation.getCurrentPosition(exito, error, opciones);
+}
+
+function exito(posicion) {
+    const estado = document.getElementById('estado');
+    const latitud = posicion.coords.latitude;
+    const longitud = posicion.coords.longitude;
+    
+    estado.style.color = "#4cd964";
+    estado.innerHTML = "¡Ubicación encontrada! Redirigiendo...";
+
+    // Creamos el texto de la emergencia y el enlace de Google Maps
+    const mensaje = `¡EMERGENCIA! Estoy atrapado o necesito ayuda urgente. Mi ubicación actual es: https://maps.google.com/?q=${latitud},${longitud}`;
+    
+    // Codificamos el texto para que sea válido en una URL
+    const mensajeCodificado = encodeURIComponent(mensaje);
+    
+    // Redirige automáticamente a WhatsApp con el mensaje listo para enviar
+    // Nota: El usuario solo tendrá que elegir a qué contacto o grupo de rescate enviárselo
+    setTimeout(() => {
+        window.location.href = `https://api.whatsapp.com/send?text=${mensajeCodificado}`;
+    }, 1000);
+}
+
+function error(err) {
+    const estado = document.getElementById('estado');
+    estado.style.color = "#ff3b30";
+    
+    switch(err.code) {
+        case err.PERMISSION_DENIED:
+            estado.innerHTML = "Error: Denegaste el permiso de GPS.";
+            break;
+        case err.POSITION_UNAVAILABLE:
+            estado.innerHTML = "Error: Ubicación no disponible (revisa tu señal).";
+            break;
+        case err.TIMEOUT:
+            estado.innerHTML = "Error: Se agotó el tiempo de espera.";
+            break;
+        default:
+            estado.innerHTML = "Error al obtener la ubicación.";
+            break;
+    }
+}
+</script>
+
+</body>
+</html>
