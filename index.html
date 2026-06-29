@@ -3,148 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auxilio Inmediato - Localizador de Emergencia</title>
+    <title>S.O.S. - Localizador de Emergencia</title>
     <style>
+        :root {
+            --bg-color: #f6f8fa;
+            --card-bg: #ffffff;
+            --text-main: #1f2328;
+            --text-muted: #57606a;
+            --primary-wa: #25D366;
+            --primary-sms: #007AFF;
+            --danger: #ff3b30;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 95vh;
+        }
+
+        .card {
+            background: var(--card-bg);
+            max-width: 420px;
+            width: 100%;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        /* Sección de Configuración de Contactos */
+        .setup-section {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid #e1e4e6;
+        }
+
+        .setup-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+        
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary-sms);
+        }
+
+        /* Botones de Acción Activa */
+        .actions-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            border: none;
+            border-radius: 16px;
+            padding: 20px 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 90vh;
+            gap: 8px;
+            transition: transform 0.1s, filter 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .container {
-            max-width: 400px;
-            width: 100%;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-wa {
+            background-color: var(--primary-wa);
+        }
+
+        .btn-sms {
+            background-color: var(--primary-sms);
+        }
+
+        .btn-icon {
+            font-size: 28px;
+        }
+
+        /* Estado del GPS */
+        .status-box {
+            min-height: 22px;
             text-align: center;
-        }
-        h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #666;
             font-size: 14px;
-            margin-bottom: 30px;
+            font-weight: 600;
+            color: var(--primary-sms);
+            margin-top: 15px;
         }
-        .btn-panic {
-            background-color: #ff3b30;
-            color: white;
-            border: none;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 59, 48, 0.4);
-            transition: transform 0.2s, background-color 0.2s;
-            text-transform: uppercase;
-        }
-        .btn-panic:active {
-            transform: scale(0.95);
-            background-color: #d63026;
-        }
-        .status {
-            margin-top: 25px;
-            font-size: 15px;
-            font-weight: bold;
-            color: #007aff;
-            min-height: 20px;
-        }
-        .instructions {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #999;
+
+        .footer-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 15px;
             line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>LOCALIZADOR DE EMERGENCIA</h1>
-    <p>Presiona el botón para obtener tu ubicación actual y preparar el mensaje de ayuda.</p>
-    
-    <button class="btn-panic" onclick="buscarUbicacion()">Pedir<br>Ayuda</button>
-    
-    <div id="estado" class="status"></div>
+<div class="card">
+    <h1>S.O.S. LOCALIZADOR</h1>
+    <div class="subtitle">Obtén tu ubicación exacta y pide auxilio al instante.</div>
 
-    <div class="instructions">
-        * Nota: Tu teléfono te pedirá permiso para acceder a la ubicación (GPS). Debes darle en "Permitir" para que funcione.
+    <div class="setup-section">
+        <div class="setup-title">
+            <span>Contactos de Emergencia</span>
+            <span style="color: #2da44e; font-size: 11px;">💾 Auto-guardado</span>
+        </div>
+        <div class="input-group">
+            <label for="phone1">Contacto Principal (Familiar)</label>
+            <input type="tel" id="phone1" placeholder="Ej. 987654321" oninput="guardarContactos()">
+        </div>
+    </div>
+
+    <div class="actions-layout">
+        <button class="action-btn btn-wa" onclick="procesarEmergencia('wa')">
+            <span class="btn-icon">💬</span>
+            Enviar por<br>WhatsApp
+        </button>
+        <button class="action-btn btn-sms" onclick="procesarEmergencia('sms')">
+            <span class="btn-icon">✉️</span>
+            Enviar por<br>SMS (Sin Datos)
+        </button>
+    </div>
+
+    <div id="status" class="status-box"></div>
+
+    <div class="footer-note">
+        Los números se guardan de forma segura en tu propio celular. Al presionar un botón, se encenderá el GPS para geolocalizarte de inmediato.
     </div>
 </div>
 
 <script>
-function buscarUbicacion() {
-    const estado = document.getElementById('estado');
-    
-    // Validar si el navegador soporta Geolocalización
-    if (!navigator.geolocation) {
-        estado.style.color = "#ff3b30";
-        estado.innerHTML = "Tu navegador no soporta geolocalización.";
+// Cargar los contactos automáticamente al abrir la página
+window.onload = function() {
+    if(localStorage.getItem('sos_phone1')) {
+        document.getElementById('phone1').value = localStorage.getItem('sos_phone1');
+    }
+}
+
+// Guardar los contactos en el almacenamiento local del teléfono cada vez que se editan
+function guardarContactos() {
+    const p1 = document.getElementById('phone1').value;
+    localStorage.setItem('sos_phone1', p1);
+}
+
+// Función principal al presionar cualquier botón
+function procesarEmergencia(canal) {
+    const status = document.getElementById('status');
+    const telefono = document.getElementById('phone1').value.trim();
+
+    if (!telefono) {
+        status.style.color = "var(--danger)";
+        status.innerHTML = "⚠️ Por favor, escribe un número primero.";
         return;
     }
-    
-    estado.style.color = "#007aff";
-    estado.innerHTML = "Obteniendo coordenadas GPS...";
-    
-    // Configuración de alta precisión para el GPS
+
+    if (!navigator.geolocation) {
+        status.style.color = "var(--danger)";
+        status.innerHTML = "❌ Geolocalización no soportada.";
+        return;
+    }
+
+    status.style.color = "var(--primary-sms)";
+    status.innerHTML = "⏳ Activando GPS y localizando...";
+
     const opciones = {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 0
     };
 
-    navigator.geolocation.getCurrentPosition(exito, error, opciones);
+    navigator.geolocation.getCurrentPosition(
+        (posicion) => exitoUbicacion(posicion, canal, telefono), 
+        (error) => manejarError(error), 
+        opciones
+    );
 }
 
-function exito(posicion) {
-    const estado = document.getElementById('estado');
-    const latitud = posicion.coords.latitude;
-    const longitud = posicion.coords.longitude;
+function exitoUbicacion(posicion, canal, telefono) {
+    const status = document.getElementById('status');
+    const lat = posicion.coords.latitude;
+    const lon = posicion.coords.longitude;
     
-    estado.style.color = "#4cd964";
-    estado.innerHTML = "¡Ubicación encontrada! Redirigiendo...";
+    status.style.color = "#2da44e";
+    status.innerHTML = "✅ ¡Ubicación fijada! Abriendo app...";
 
-    // Creamos el texto de la emergencia y el enlace de Google Maps
-    const mensaje = `¡EMERGENCIA! Estoy atrapado o necesito ayuda urgente. Mi ubicación actual es: https://maps.google.com/?q=${latitud},${longitud}`;
-    
-    // Codificamos el texto para que sea válido en una URL
+    const mensaje = `¡EMERGENCIA! Necesito ayuda. Mi ubicación actual: https://maps.google.com/?q=${lat},${lon}`;
     const mensajeCodificado = encodeURIComponent(mensaje);
-    
-    // Redirige automáticamente a WhatsApp con el mensaje listo para enviar
-    // Nota: El usuario solo tendrá que elegir a qué contacto o grupo de rescate enviárselo
+
     setTimeout(() => {
-        window.location.href = `https://api.whatsapp.com/send?text=${mensajeCodificado}`;
-    }, 1000);
+        if (canal === 'wa') {
+            // Abre WhatsApp directo al chat del contacto configurado
+            window.location.href = `https://api.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
+        } else if (canal === 'sms') {
+            // Abre la app de SMS nativa con el número y texto listo
+            // "sms:" funciona en Android e iOS de forma estándar
+            window.location.href = `sms:${telefono}?body=${mensajeCodificado}`;
+        }
+    }, 800);
 }
 
-function error(err) {
-    const estado = document.getElementById('estado');
-    estado.style.color = "#ff3b30";
+function manejarError(err) {
+    const status = document.getElementById('status');
+    status.style.color = "var(--danger)";
     
-    switch(err.code) {
-        case err.PERMISSION_DENIED:
-            estado.innerHTML = "Error: Denegaste el permiso de GPS.";
-            break;
-        case err.POSITION_UNAVAILABLE:
-            estado.innerHTML = "Error: Ubicación no disponible (revisa tu señal).";
-            break;
-        case err.TIMEOUT:
-            estado.innerHTML = "Error: Se agotó el tiempo de espera.";
-            break;
-        default:
-            estado.innerHTML = "Error al obtener la ubicación.";
-            break;
+    if (err.code === 1) {
+        status.innerHTML = "🔒 Permiso de GPS denegado.";
+    } else if (err.code === 3) {
+        status.innerHTML = "⏱️ Tiempo agotado. Intenta de nuevo en zona despejada.";
+    } else {
+        status.innerHTML = "❌ Error al obtener ubicación.";
     }
 }
 </script>
